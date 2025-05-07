@@ -46,6 +46,7 @@ class Game:
                 self._did_guess_word = True
                 chosen_word = chosen_letter[1:]
                 if chosen_word == self._secret_word:
+                    self._number_of_games_won += self.secret_word_display.count('_')
                     for c in self._secret_word:
                         self._guessed_letters.add(c)
                     break
