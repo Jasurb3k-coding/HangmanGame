@@ -3,14 +3,17 @@ from typing import Set
 import string
 from helpers import *
 
+MAX_GUESSES = 6  # it should be 6 for the hangman pictures to work
+
 
 class Game:
     _secret_word: str = ""
     _guessed_letters: Set[str] = set()
-    _guesses_remaining: int = 6
+    _guesses_remaining: int = MAX_GUESSES
     _current_round: int = 1
     _is_game_over = False
     _is_new_game = True
+    _did_guess_word = False
     _words = []
 
     def __init__(self):
@@ -27,15 +30,27 @@ class Game:
 
     def reset_game(self):
         self._guessed_letters: Set[str] = set()
-        self._guesses_remaining: int = 6
+        self._guesses_remaining: int = MAX_GUESSES
         self._current_round: int = 1
         self._is_game_over = False
         self._secret_word = self.choose_secret_word()
         self._is_new_game = False
+        self._did_guess_word = False
+
 
     def process_user_input(self):
         while True:
             chosen_letter = input("Enter your guess: ").upper()
+            if chosen_letter.startswith(">"):
+                self._did_guess_word = True
+                chosen_word = chosen_letter[1:]
+                if chosen_word == self._secret_word:
+                    for c in self._secret_word:
+                        self._guessed_letters.add(c)
+                    break
+                else:
+                    self._guesses_remaining = 0
+                    break
             if len(chosen_letter) != 1 or chosen_letter not in string.ascii_uppercase:
                 print("Please enter only one ascii character")
                 continue
@@ -44,7 +59,8 @@ class Game:
                 continue
             break
 
-        if chosen_letter not in self._secret_word:
+
+        if not self._did_guess_word and chosen_letter not in self._secret_word:
             self._guesses_remaining -= 1
 
         self._guessed_letters.add(chosen_letter)
@@ -94,6 +110,7 @@ class Game:
 
     def print_game_state(self) -> None:
         clear_console()
+        self.print_hangman()
         lives_remaining = self._guesses_remaining if self._guesses_remaining > 3 else paint(
             str(self._guesses_remaining), Color.RED
         )
@@ -111,11 +128,19 @@ class Game:
             _secret_word_reveal_display.append(reveal_letter)
         return "".join(_secret_word_reveal_display)
 
+    def print_hangman(self):
+        hangman_picture_index = MAX_GUESSES - self._guesses_remaining
+        print(HANGMANPICS[hangman_picture_index])
+
     def print_lost_menu(self):
+        clear_console()
+        self.print_hangman()
         you_lost_text = paint('You Lost!', Color.RED)
         print(f"{you_lost_text} The word was {self.secret_word_reveal_display}")
 
     def print_win_menu(self):
+        clear_console()
+        print(HANGMAN_SAVED_PIC)
         you_won_text = paint('You Won!', Color.GREEN)
         print(f"{you_won_text} The word was {self.secret_word_reveal_display}")
 
