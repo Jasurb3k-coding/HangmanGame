@@ -1,3 +1,4 @@
+import random
 from typing import Set
 import string
 from helpers import *
@@ -10,8 +11,13 @@ class Game:
     _current_round: int = 1
     _is_game_over = False
     _is_new_game = True
+    _words = []
+
+    def __init__(self):
+        self.load_words()
 
     def start(self) -> None:
+        print(self._is_new_game)
         while self._is_new_game:
             self.reset_game()
             while not self._is_game_over:
@@ -20,7 +26,6 @@ class Game:
                 self._current_round += 1
 
     def reset_game(self):
-        self._secret_word: str = ""
         self._guessed_letters: Set[str] = set()
         self._guesses_remaining: int = 6
         self._current_round: int = 1
@@ -67,9 +72,14 @@ class Game:
                 break
             print(f"Please enter either {underlined_Y}es or {underlined_N}o")
 
+    def load_words(self):
+        with open('words.txt', 'r') as words_file:
+            self._words = words_file.read().split('\n')
+
     # implement
     def choose_secret_word(self) -> str:
-        return "hangman".upper()
+        secret_word = random.choice(self._words).upper()
+        return secret_word
 
     @property
     def available_letters(self) -> Set[str]:
