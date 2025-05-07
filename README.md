@@ -1,4 +1,5 @@
 # Welcome to Hangman
+Get the latest version on [GitHub](https://github.com/Jasurb3k-coding/HangmanGame)
 
 ## Running the game
 Run the game by
