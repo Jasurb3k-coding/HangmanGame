@@ -80,6 +80,10 @@ class Game:
         you_lost_text = paint('You Lost!', Color.RED)
         print(f"{you_lost_text} The word was {self.secret_word_reveal_display}")
 
+    def print_win_menu(self):
+        you_won_text = paint('You Won!', Color.OKGREEN)
+        print(f"{you_won_text} The word was {self.secret_word_reveal_display}")
+
     def print_letters(self) -> None:
         all_letters = list(string.ascii_uppercase)
         strikethrough_character = '\u0336'
