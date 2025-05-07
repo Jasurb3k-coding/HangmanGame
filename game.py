@@ -5,22 +5,33 @@ from helpers import *
 
 class Game:
     _secret_word: str = ""
-    _guessed_letters: Set[str] = {'A', 'B'}
-    _guesses_remaining: int = 1
+    _guessed_letters: Set[str] = set()
+    _guesses_remaining: int = 6
     _current_round: int = 1
-    _is_game_over = 0
+    _is_game_over = False
+    _is_new_game = True
 
     def start(self) -> None:
+        while self._is_new_game:
+            self.reset_game()
+            while not self._is_game_over:
+                self.print_game_state()
+                self.process_user_input()
+                self._current_round += 1
+
+    def reset_game(self):
+        self._secret_word: str = ""
+        self._guessed_letters: Set[str] = set()
+        self._guesses_remaining: int = 6
+        self._current_round: int = 1
+        self._is_game_over = False
         self._secret_word = self.choose_secret_word()
-        while not self._is_game_over:
-            self.print_game_state()
-            self.process_user_input()
-            self._current_round += 1
+        self._is_new_game = False
 
     def process_user_input(self):
         while True:
-            chosen_letter = input("Enter your guess: ")
-            if len(chosen_letter) != 1 or chosen_letter not in string.ascii_letters:
+            chosen_letter = input("Enter your guess: ").upper()
+            if len(chosen_letter) != 1 or chosen_letter not in string.ascii_uppercase:
                 print("Please enter only one ascii character")
                 continue
             if chosen_letter in self._guessed_letters:
@@ -41,6 +52,20 @@ class Game:
         if '_' not in self.secret_word_display:
             self._is_game_over = True
             self.print_win_menu()
+        if self._is_game_over:
+            self.prompt_new_game()
+
+    def prompt_new_game(self):
+        underlined_Y = paint('Y', Color.UNDERLINE)
+        underlined_N = paint('N', Color.UNDERLINE)
+        while True:
+            is_new_game = input(f"Do you want to play a new game? {underlined_Y}es/{underlined_N}o: ").upper()
+            if is_new_game in ('YES', 'Y'):
+                self._is_new_game = True
+                break
+            elif is_new_game in ('NO', 'N'):
+                break
+            print(f"Please enter either {underlined_Y}es or {underlined_N}o")
 
     # implement
     def choose_secret_word(self) -> str:
@@ -64,7 +89,7 @@ class Game:
         )
         print(f"Round {self._current_round}\t\t|\t\tLives remaining: {lives_remaining}")
         self.print_letters()
-        print(self.secret_word_display)
+        print(f"> {self.secret_word_display} <")
 
     @property
     def secret_word_reveal_display(self) -> str:
