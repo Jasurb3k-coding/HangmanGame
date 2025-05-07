@@ -7,6 +7,8 @@ MAX_GUESSES = 6  # it should be 6 for the hangman pictures to work
 
 
 class Game:
+    _number_of_games_won = 0
+    _number_of_games_lost = 0
     _secret_word: str = ""
     _guessed_letters: Set[str] = set()
     _guesses_remaining: int = MAX_GUESSES
@@ -37,7 +39,6 @@ class Game:
         self._is_new_game = False
         self._did_guess_word = False
 
-
     def process_user_input(self):
         while True:
             chosen_letter = input("Enter your guess: ").upper()
@@ -59,7 +60,6 @@ class Game:
                 continue
             break
 
-
         if not self._did_guess_word and chosen_letter not in self._secret_word:
             self._guesses_remaining -= 1
 
@@ -69,11 +69,14 @@ class Game:
     def check_game_ending_conditions(self) -> None:
         if self._guesses_remaining < 1:
             self._is_game_over = True
+            self._number_of_games_lost += 1
             self.print_lost_menu()
         if '_' not in self.secret_word_display:
             self._is_game_over = True
+            self._number_of_games_won += 1
             self.print_win_menu()
         if self._is_game_over:
+            self.print_overall_game_score()
             self.prompt_new_game()
 
     def prompt_new_game(self):
@@ -144,6 +147,12 @@ class Game:
         you_won_text = paint('You Won!', Color.GREEN)
         print(f"{you_won_text} The word was {self.secret_word_reveal_display}")
 
+    def print_overall_game_score(self):
+        wins = paint(f"won {self._number_of_games_won} games", Color.GREEN)
+        loses = paint(f"lost {self._number_of_games_lost} games", Color.RED)
+        to_print = f"You {wins} and {loses}"
+        print(to_print)
+
     def print_letters(self) -> None:
         all_letters = list(string.ascii_uppercase)
         for letter in all_letters:
@@ -154,8 +163,3 @@ class Game:
                 printable_letter = paint(letter, Color.CYAN)
             print(printable_letter, end=' ')
         print()
-
-
-if __name__ == '__main__':
-    game = Game()
-    game.start()
