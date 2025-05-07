@@ -97,7 +97,7 @@ class Game:
         for i in range(len(self._secret_word)):
             actual_letter = self._secret_word[i]
             guessed_letter = self.secret_word_display[i]
-            reveal_letter = paint(actual_letter, Color.OKGREEN) if actual_letter == guessed_letter else actual_letter
+            reveal_letter = paint(actual_letter, Color.GREEN) if actual_letter == guessed_letter else actual_letter
             _secret_word_reveal_display.append(reveal_letter)
         return "".join(_secret_word_reveal_display)
 
@@ -106,18 +106,17 @@ class Game:
         print(f"{you_lost_text} The word was {self.secret_word_reveal_display}")
 
     def print_win_menu(self):
-        you_won_text = paint('You Won!', Color.OKGREEN)
+        you_won_text = paint('You Won!', Color.GREEN)
         print(f"{you_won_text} The word was {self.secret_word_reveal_display}")
 
     def print_letters(self) -> None:
         all_letters = list(string.ascii_uppercase)
-        strikethrough_character = '\u0336'
         for letter in all_letters:
             if letter in self._guessed_letters:
-                color = Color.OKGREEN if letter in self._secret_word else Color.RED
-                printable_letter = paint(letter + strikethrough_character, color)
+                color = Color.GREEN if letter in self._secret_word else Color.RED
+                printable_letter = paint(paint(letter, color), Color.STRIKE)
             else:
-                printable_letter = paint(letter, Color.OKCYAN)
+                printable_letter = paint(letter, Color.CYAN)
             print(printable_letter, end=' ')
         print()
 
