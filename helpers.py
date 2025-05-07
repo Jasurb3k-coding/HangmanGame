@@ -15,3 +15,6 @@ class Color(Enum):
 
 def paint(text: str, color: Color) -> str:
     return f"{color.value}{text}{Color.ENDC.value}"
+
+def clear_console():
+    print("\n"*50)

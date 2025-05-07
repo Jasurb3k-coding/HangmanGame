@@ -1,6 +1,6 @@
 from typing import Set
 import string
-from helpers import Color, paint
+from helpers import *
 
 
 class Game:
@@ -18,6 +18,7 @@ class Game:
             self._current_round += 1
 
     def print_game_state(self) -> None:
+        clear_console()
         lives_remaining = self._guesses_remaining if self._guesses_remaining > 3 else paint(
             str(self._guesses_remaining), Color.FAIL
         )
